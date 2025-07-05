@@ -1,29 +1,54 @@
 {
   "expo": {
-    "name": "SimpleBibleApp",
-    "slug": "SimpleBibleApp",
+    "name": "My Bible Verses",
+    "slug": "mybibleverses",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#6C63FF"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cscouto.mybibleverses"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "manifest": {
+        "supports-screens": {
+          "android:smallScreens": true,
+          "android:normalScreens": true,
+          "android:largeScreens": false,
+          "android:xlargeScreens": false
+        }
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.cscouto.mybibleverses"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      "expo-notifications",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6187514198107367~1412166279",
+          "android_app_id": "ca-app-pub-6187514198107367~1412166279",
+          "iosAppId": "ca-app-pub-6187514198107367~1997138566",
+          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      "expo-tracking-transparency",
+      "expo-font"
+    ]
   }
 }
