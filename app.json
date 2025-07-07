@@ -2,7 +2,7 @@
   "expo": {
     "name": "My Bible Verses",
     "slug": "mybibleverses",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.cscouto.mybibleverses"
+      "bundleIdentifier": "com.cscouto.mybibleverses",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+      }
     },
     "android": {
       "adaptiveIcon": {

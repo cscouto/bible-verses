@@ -95,8 +95,18 @@ export default function App() {
 
   // tracking permission on iOS (hook #6)
   useEffect(() => {
-    if (Platform.OS === 'ios') requestTrackingPermissionsAsync();
+    if (Platform.OS === 'ios') {
+      (async () => {
+        try {
+          const { status, granted } = await requestTrackingPermissionsAsync();
+          console.log('ATT status:', status, 'granted?', granted);
+        } catch (err) {
+          console.warn('ATT request failed:', err);
+        }
+      })();
+    }
   }, []);
+
 
   // request notifications & create Android channel (hook #7)
   useEffect(() => {
@@ -231,7 +241,7 @@ export default function App() {
               </Animatable.View>
             )}
           </View>
-          <View style={{ marginBottom: 40}}><BannerAd unitId={bannerId} size={BannerAdSize.ADAPTIVE_BANNER} /></View>
+          <View style={{ marginBottom: 40 }}><BannerAd unitId={bannerId} size={BannerAdSize.ADAPTIVE_BANNER} /></View>
         </ImageBackground>
       </PaperProvider>
     </SafeAreaProvider>
