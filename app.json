@@ -20,7 +20,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.cscouto.mybibleverses",
       "infoPlist": {
-        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        "NSUserTrackingUsageDescription":
+          "This identifier will be used to deliver personalised ads to you."
       }
     },
     "android": {
@@ -45,9 +46,7 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-6187514198107367~1412166279",
-          "android_app_id": "ca-app-pub-6187514198107367~1412166279",
-          "iosAppId": "ca-app-pub-6187514198107367~1997138566",
-          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+          "iosAppId": "ca-app-pub-6187514198107367~1997138566"
         }
       ],
       "expo-tracking-transparency",

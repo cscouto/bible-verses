@@ -37,7 +37,6 @@ import mobileAds, {
   TestIds,
 } from 'react-native-google-mobile-ads';
 import { useFonts } from 'expo-font';
-import { InteractionManager } from 'react-native';
 
 /* ---------- STATIC ASSETS ---------- */
 const BACKGROUND = require('./assets/background.png');
@@ -84,7 +83,7 @@ const theme = {
 
 export default function App() {
   /* ------------ STATE ------------ */
-  const [attStatus, setAttStatus] = useState('undetermined'); // 'undetermined' | 'granted' | 'denied'
+  const [attStatus, setAttStatus] = useState('undetermined'); // 'undetermined' | 'granted' | 'denied' | 'restricted'
   const [verse, setVerse] = useState({ text: '', reference: '' });
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState('loading'); // loading | open | turn | display
@@ -106,23 +105,24 @@ export default function App() {
     });
 
   /* -------------------------------------------------------------------- */
-  /* 1) REQUEST APP‑TRACKING‑TRANSPARENCY BEFORE ANYTHING TOUCHES THE IDFA */
+  /* 1) REQUEST APP-TRACKING-TRANSPARENCY IMMEDIATELY                      */
+  /*    (No InteractionManager wrapper → cannot be skipped by iOS)        */
   /* -------------------------------------------------------------------- */
   useEffect(() => {
-    let cancelled = false;
-    const task = InteractionManager.runAfterInteractions(async () => {
-      if (cancelled) return;
-      if (Platform.OS !== 'ios') { setAttStatus('granted'); return; }
+    (async () => {
+      if (Platform.OS !== 'ios') {
+        setAttStatus('granted'); // Android, Web, etc.
+        return;
+      }
 
       const { status } = await getTrackingPermissionsAsync();
       if (status === 'undetermined') {
         const { status: afterPrompt } = await requestTrackingPermissionsAsync();
         setAttStatus(afterPrompt);
       } else {
-        setAttStatus(status);
+        setAttStatus(status); // 'granted' | 'denied' | 'restricted'
       }
-    });
-    return () => { cancelled = true; task.cancel?.(); };
+    })();
   }, []);
 
   /* -------------------------------------------------------------------- */
@@ -130,7 +130,7 @@ export default function App() {
   /* -------------------------------------------------------------------- */
   useEffect(() => {
     if (attStatus !== 'undetermined') {
-      mobileAds().initialize(); // Safe: runs once
+      mobileAds().initialize(); // Safe: runs once after ATT resolved
     }
   }, [attStatus]);
 
@@ -241,7 +241,7 @@ export default function App() {
               {BUTTON_LABEL}
             </Button>
 
-            {/* ----------- Page‑turn animation ----------- */}
+            {/* ----------- Page-turn animation ----------- */}
             {(stage === 'open' || stage === 'turn') && (
               <LottieView
                 ref={turnAnim}
