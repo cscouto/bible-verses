@@ -1,7 +1,7 @@
 // App.js
 
 // Dependencies (install via npm/yarn):
-// expo install expo-notifications @react-native-async-storage/async-storage react-native-localize expo-font
+// expo install expo-notifications @react-native-async-storage/async-storage react-native-localize expo-font expo-tracking-transparency
 // npm install react-native-paper react-native-animatable lottie-react-native react-native-google-mobile-ads
 
 import { useFonts } from 'expo-font';
@@ -73,18 +73,21 @@ const theme = {
 };
 
 export default function App() {
-  // state & refs
+  // tracking status state
+  const [attStatus, setAttStatus] = useState('undetermined');
+
+  // app state & refs
   const [verse, setVerse] = useState({ text: '', reference: '' });
   const [loading, setLoading] = useState(true);
-  const [stage, setStage] = useState('loading'); // 'loading'→'open'→'turn'→'display'
+  const [stage, setStage] = useState('loading');
   const turnAnim = useRef(null);
 
-  // load custom font (hook #5)
+  // load custom font
   const [fontsLoaded] = useFonts({
     Merriweather: require('./assets/fonts/Merriweather.ttf'),
   });
 
-  // ad unit id (constant)
+  // ad unit id
   const bannerId = __DEV__
     ? TestIds.BANNER
     : Platform.select({
@@ -93,22 +96,25 @@ export default function App() {
       default: TestIds.BANNER,
     });
 
-  // tracking permission on iOS (hook #6)
+  // 1) Request ATT prompt immediately on iOS
   useEffect(() => {
     if (Platform.OS === 'ios') {
       (async () => {
         try {
-          const { status, granted } = await requestTrackingPermissionsAsync();
-          console.log('ATT status:', status, 'granted?', granted);
+          const { status } = await requestTrackingPermissionsAsync();
+          setAttStatus(status);  // 'granted' | 'denied'
         } catch (err) {
           console.warn('ATT request failed:', err);
+          setAttStatus('denied');
         }
       })();
+    } else {
+      // Android / others: consider tracking allowed
+      setAttStatus('granted');
     }
   }, []);
 
-
-  // request notifications & create Android channel (hook #7)
+  // 2) Request notification permissions & Android channel
   useEffect(() => {
     (async () => {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -126,18 +132,18 @@ export default function App() {
     })();
   }, []);
 
-  // fetch + schedule on mount (hook #8)
+  // 3) Fetch verse & schedule notification on mount (and on language change)
   useEffect(() => {
     (async () => {
       await fetchVerse();
       await scheduleIfNeeded();
       setStage('open');
     })();
-  }, []);
+  }, [TRANSLATION_ID]);
 
-  // don't render UI until fonts are ready (all hooks have been called)
+  // 4) Don’t render any UI until fonts loaded & ATT prompt answered
   if (!fontsLoaded) {
-    return null;
+    return null;  // keep splash up
   }
 
   // fetch a random verse
@@ -158,7 +164,7 @@ export default function App() {
     setLoading(false);
   }
 
-  // schedule a one-time 10 AM notification if app not opened today
+  // schedule daily notification at 10am if not opened yet
   async function scheduleIfNeeded() {
     const today = new Date().toISOString().split('T')[0];
     const lastOpen = await AsyncStorage.getItem(LAST_OPEN_KEY);
@@ -170,18 +176,14 @@ export default function App() {
       }
       await Notifications.cancelAllScheduledNotificationsAsync();
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: NOTIF_TITLE,
-          body: verse.text || NOTIF_BODY,
-          data: { reference: verse.reference },
-        },
+        content: { title: NOTIF_TITLE, body: verse.text || NOTIF_BODY, data: { reference: verse.reference } },
         trigger: { type: 'date', date: triggerDate, channelId: 'default' },
       });
     }
     await AsyncStorage.setItem(LAST_OPEN_KEY, today);
   }
 
-  // user taps button → refresh + immediate notification
+  // user taps “New Verse”
   async function handleRefresh() {
     setStage('open');
     await fetchVerse();
@@ -193,8 +195,8 @@ export default function App() {
       <PaperProvider theme={theme}>
         <StatusBar barStyle="dark-content" backgroundColor="#6C63FF" />
         <ImageBackground source={BACKGROUND} style={styles.background} resizeMode="cover">
-          <View style={styles.overlay}>
-            {/* pinned button */}
+          <SafeAreaView style={styles.overlay}>
+            {/* New Verse button */}
             <Button
               mode="contained"
               onPress={handleRefresh}
@@ -205,7 +207,7 @@ export default function App() {
               {BUTTON_LABEL}
             </Button>
 
-            {/* Bible open + page-turn */}
+            {/* Open & page turn animation */}
             {(stage === 'open' || stage === 'turn') && (
               <LottieView
                 ref={turnAnim}
@@ -217,7 +219,7 @@ export default function App() {
               />
             )}
 
-            {/* verse card */}
+            {/* Verse card */}
             {stage === 'display' && (
               <Animatable.View animation="zoomIn" duration={500} style={styles.cardWrapper}>
                 <Card style={styles.card} elevation={4}>
@@ -226,13 +228,9 @@ export default function App() {
                       <ActivityIndicator size="large" />
                     ) : (
                       <>
-                        <Paragraph style={styles.text}>
-                          &ldquo;{verse.text}&rdquo;
-                        </Paragraph>
+                        <Paragraph style={styles.text}>&ldquo;{verse.text}&rdquo;</Paragraph>
                         {verse.reference && (
-                          <Paragraph style={styles.reference}>
-                            {verse.reference}
-                          </Paragraph>
+                          <Paragraph style={styles.reference}>{verse.reference}</Paragraph>
                         )}
                       </>
                     )}
@@ -240,8 +238,11 @@ export default function App() {
                 </Card>
               </Animatable.View>
             )}
-          </View>
-          <View style={{ marginBottom: 40 }}><BannerAd unitId={bannerId} size={BannerAdSize.ADAPTIVE_BANNER} /></View>
+            
+          </SafeAreaView>
+          <View style={{ marginBottom: Platform.OS === "ios" ? 0 : 40 }}>
+              <BannerAd unitId={bannerId} size={BannerAdSize.ADAPTIVE_BANNER} />
+            </View>
         </ImageBackground>
       </PaperProvider>
     </SafeAreaProvider>
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
     fontFamily: 'Merriweather',
-    fontWeight: 700
+    fontWeight: '700',
   },
   reference: {
     fontSize: 14,
