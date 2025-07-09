@@ -1,43 +1,49 @@
 // App.js
-
+//
 // Dependencies (install via npm/yarn):
-// expo install expo-notifications @react-native-async-storage/async-storage react-native-localize expo-font expo-tracking-transparency
-// npm install react-native-paper react-native-animatable lottie-react-native react-native-google-mobile-ads
-
-import { useFonts } from 'expo-font';
-import React, { useEffect, useState, useRef } from 'react';
+//   expo install expo-notifications @react-native-async-storage/async-storage react-native-localize expo-font expo-tracking-transparency
+//   npm   install react-native-paper react-native-animatable lottie-react-native react-native-google-mobile-ads
+//
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  View,
-  StyleSheet,
   ActivityIndicator,
-  StatusBar,
-  Platform,
   ImageBackground,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import LottieView from 'lottie-react-native';
 import * as Animatable from 'react-native-animatable';
 import {
-  Provider as PaperProvider,
-  Card,
-  Paragraph,
   Button,
+  Card,
   DefaultTheme,
+  Paragraph,
+  Provider as PaperProvider,
   configureFonts,
 } from 'react-native-paper';
-import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  getTrackingPermissionsAsync,
+  requestTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
+import mobileAds, {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import { useFonts } from 'expo-font';
+import { InteractionManager } from 'react-native';
 
-// Background image
+/* ---------- STATIC ASSETS ---------- */
 const BACKGROUND = require('./assets/background.png');
-// Lottie animation
 import pageTurn from './assets/pageTurn.json';
 
-// ── language detection & localization ──
+/* ---------- LOCALISATION ---------- */
 const deviceLang = RNLocalize.getLocales()[0]?.languageCode || 'en';
 const isPt = deviceLang.startsWith('pt');
 const TRANSLATION_ID = isPt ? 'almeida' : 'web';
@@ -49,7 +55,7 @@ const NOTIF_BODY = isPt
   : 'Tap to open the app and read a verse!';
 const LAST_OPEN_KEY = '@bible:last_open_date';
 
-// configure notification handler
+/* ---------- NOTIFICATION HANDLER ---------- */
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -58,7 +64,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// ── CUSTOM FONT CONFIG FOR PAPER ──
+/* ---------- PAPER FONT CONFIG ---------- */
 const fontConfig = {
   default: {
     regular: { fontFamily: 'Merriweather', fontWeight: '400' },
@@ -72,22 +78,25 @@ const theme = {
   fonts: configureFonts(fontConfig),
 };
 
-export default function App() {
-  // tracking status state
-  const [attStatus, setAttStatus] = useState('undetermined');
+/* ======================================================================== */
+/*                               MAIN APP                                   */
+/* ======================================================================== */
 
-  // app state & refs
+export default function App() {
+  /* ------------ STATE ------------ */
+  const [attStatus, setAttStatus] = useState('undetermined'); // 'undetermined' | 'granted' | 'denied'
   const [verse, setVerse] = useState({ text: '', reference: '' });
   const [loading, setLoading] = useState(true);
-  const [stage, setStage] = useState('loading');
+  const [stage, setStage] = useState('loading'); // loading | open | turn | display
   const turnAnim = useRef(null);
+  const [showBanner, setShowBanner] = useState(true);
 
-  // load custom font
+  /* ------------ FONTS ------------ */
   const [fontsLoaded] = useFonts({
     Merriweather: require('./assets/fonts/Merriweather.ttf'),
   });
 
-  // ad unit id
+  /* ------------ BANNER ID ------------ */
   const bannerId = __DEV__
     ? TestIds.BANNER
     : Platform.select({
@@ -96,25 +105,38 @@ export default function App() {
       default: TestIds.BANNER,
     });
 
-  // 1) Request ATT prompt immediately on iOS
+  /* -------------------------------------------------------------------- */
+  /* 1) REQUEST APP‑TRACKING‑TRANSPARENCY BEFORE ANYTHING TOUCHES THE IDFA */
+  /* -------------------------------------------------------------------- */
   useEffect(() => {
-    if (Platform.OS === 'ios') {
-      (async () => {
-        try {
-          const { status } = await requestTrackingPermissionsAsync();
-          setAttStatus(status);  // 'granted' | 'denied'
-        } catch (err) {
-          console.warn('ATT request failed:', err);
-          setAttStatus('denied');
-        }
-      })();
-    } else {
-      // Android / others: consider tracking allowed
-      setAttStatus('granted');
-    }
+    let cancelled = false;
+    const task = InteractionManager.runAfterInteractions(async () => {
+      if (cancelled) return;
+      if (Platform.OS !== 'ios') { setAttStatus('granted'); return; }
+
+      const { status } = await getTrackingPermissionsAsync();
+      if (status === 'undetermined') {
+        const { status: afterPrompt } = await requestTrackingPermissionsAsync();
+        setAttStatus(afterPrompt);
+      } else {
+        setAttStatus(status);
+      }
+    });
+    return () => { cancelled = true; task.cancel?.(); };
   }, []);
 
-  // 2) Request notification permissions & Android channel
+  /* -------------------------------------------------------------------- */
+  /* 2) INITIALISE ADMOB ONLY AFTER ATT RESULT IS KNOWN                    */
+  /* -------------------------------------------------------------------- */
+  useEffect(() => {
+    if (attStatus !== 'undetermined') {
+      mobileAds().initialize(); // Safe: runs once
+    }
+  }, [attStatus]);
+
+  /* -------------------------------------------------------------------- */
+  /* 3) NOTIFICATION PERMISSIONS & ANDROID CHANNEL                         */
+  /* -------------------------------------------------------------------- */
   useEffect(() => {
     (async () => {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -132,7 +154,9 @@ export default function App() {
     })();
   }, []);
 
-  // 3) Fetch verse & schedule notification on mount (and on language change)
+  /* -------------------------------------------------------------------- */
+  /* 4) FETCH FIRST VERSE + SCHEDULE DAILY NOTIF                           */
+  /* -------------------------------------------------------------------- */
   useEffect(() => {
     (async () => {
       await fetchVerse();
@@ -141,12 +165,15 @@ export default function App() {
     })();
   }, [TRANSLATION_ID]);
 
-  // 4) Don’t render any UI until fonts loaded & ATT prompt answered
+  /* -------------------------------------------------------------------- */
+  /* 5) KEEP SPLASH UNTIL FONTS LOADED                                     */
+  /* -------------------------------------------------------------------- */
   if (!fontsLoaded) {
-    return null;  // keep splash up
+    return null;
   }
 
-  // fetch a random verse
+  /* ============================ HELPERS =============================== */
+
   async function fetchVerse() {
     setLoading(true);
     try {
@@ -164,39 +191,46 @@ export default function App() {
     setLoading(false);
   }
 
-  // schedule daily notification at 10am if not opened yet
   async function scheduleIfNeeded() {
     const today = new Date().toISOString().split('T')[0];
     const lastOpen = await AsyncStorage.getItem(LAST_OPEN_KEY);
+
     if (lastOpen !== today) {
       let triggerDate = new Date();
       triggerDate.setHours(10, 0, 0, 0);
-      if (new Date() >= triggerDate) {
-        triggerDate.setDate(triggerDate.getDate() + 1);
-      }
+      if (new Date() >= triggerDate) triggerDate.setDate(triggerDate.getDate() + 1);
+
       await Notifications.cancelAllScheduledNotificationsAsync();
       await Notifications.scheduleNotificationAsync({
-        content: { title: NOTIF_TITLE, body: verse.text || NOTIF_BODY, data: { reference: verse.reference } },
+        content: {
+          title: NOTIF_TITLE,
+          body: verse.text || NOTIF_BODY,
+          data: { reference: verse.reference },
+        },
         trigger: { type: 'date', date: triggerDate, channelId: 'default' },
       });
     }
     await AsyncStorage.setItem(LAST_OPEN_KEY, today);
   }
 
-  // user taps “New Verse”
   async function handleRefresh() {
     setStage('open');
     await fetchVerse();
     await scheduleIfNeeded();
   }
 
+  /* ============================== UI ================================== */
   return (
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
         <StatusBar barStyle="dark-content" backgroundColor="#6C63FF" />
-        <ImageBackground source={BACKGROUND} style={styles.background} resizeMode="cover">
+        <ImageBackground
+          source={BACKGROUND}
+          style={styles.background}
+          resizeMode="cover"
+        >
           <SafeAreaView style={styles.overlay}>
-            {/* New Verse button */}
+            {/* ----------- New Verse Button ----------- */}
             <Button
               mode="contained"
               onPress={handleRefresh}
@@ -207,7 +241,7 @@ export default function App() {
               {BUTTON_LABEL}
             </Button>
 
-            {/* Open & page turn animation */}
+            {/* ----------- Page‑turn animation ----------- */}
             {(stage === 'open' || stage === 'turn') && (
               <LottieView
                 ref={turnAnim}
@@ -219,18 +253,26 @@ export default function App() {
               />
             )}
 
-            {/* Verse card */}
+            {/* ----------- Verse Card ----------- */}
             {stage === 'display' && (
-              <Animatable.View animation="zoomIn" duration={500} style={styles.cardWrapper}>
+              <Animatable.View
+                animation="zoomIn"
+                duration={500}
+                style={styles.cardWrapper}
+              >
                 <Card style={styles.card} elevation={4}>
                   <Card.Content>
                     {loading ? (
                       <ActivityIndicator size="large" />
                     ) : (
                       <>
-                        <Paragraph style={styles.text}>&ldquo;{verse.text}&rdquo;</Paragraph>
+                        <Paragraph style={styles.text}>
+                          &ldquo;{verse.text}&rdquo;
+                        </Paragraph>
                         {verse.reference && (
-                          <Paragraph style={styles.reference}>{verse.reference}</Paragraph>
+                          <Paragraph style={styles.reference}>
+                            {verse.reference}
+                          </Paragraph>
                         )}
                       </>
                     )}
@@ -238,40 +280,40 @@ export default function App() {
                 </Card>
               </Animatable.View>
             )}
-            
           </SafeAreaView>
-          <View style={{ marginBottom: Platform.OS === "ios" ? 0 : 40 }}>
-              <BannerAd unitId={bannerId} size={BannerAdSize.ADAPTIVE_BANNER} />
+
+          {/* ----------- Ad Banner (renders ONLY after ATT status decided) ----------- */}
+          {attStatus !== 'undetermined' && showBanner && (
+            <View style={{ marginBottom: Platform.OS === 'ios' ? 0 : 40 }}>
+              <BannerAd
+                unitId={bannerId}
+                size={BannerAdSize.ADAPTIVE_BANNER}
+                onAdLoaded={() => setShowBanner(true)}                      // ad came back → show
+                onAdFailedToLoad={err => {                                  // 👈 hide on failure
+                  console.warn('Banner failed:', err);
+                  setShowBanner(false);
+                }}
+              />
             </View>
+          )}
         </ImageBackground>
       </PaperProvider>
     </SafeAreaProvider>
   );
 }
 
+/* ============================ STYLES ================================ */
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
+  background: { flex: 1 },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  lottie: {
-    width: 300,
-    height: 300,
-  },
-  cardWrapper: {
-    width: '80%',
-    alignItems: 'center',
-  },
-  card: {
-    borderRadius: 16,
-    padding: 12,
-    width: '100%',
-  },
+  lottie: { width: 300, height: 300 },
+  cardWrapper: { width: '80%', alignItems: 'center' },
+  card: { borderRadius: 16, padding: 12, width: '100%' },
   text: {
     fontSize: 20,
     textAlign: 'center',
@@ -285,8 +327,5 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontFamily: 'Merriweather',
   },
-  refreshBtn: {
-    position: 'absolute',
-    top: 60,
-  },
+  refreshBtn: { position: 'absolute', top: 60 },
 });
