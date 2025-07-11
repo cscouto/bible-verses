@@ -8,25 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		35E5646CEF1DEA027CDB4615 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9BD7D3DE22E76B4141B93E /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		71982F3E1F307FA61C89F641 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E2B1460624455774C7A7EF /* ExpoModulesProvider.swift */; };
-		71D9A2EB8B882ADDEE6EF703 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2641C49564833E89F06D5490 /* PrivacyInfo.xcprivacy */; };
+		B8F666014803CBD4CF9BA2D9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 27E552BCA190661D754BAAFD /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CDA0FFAE046FAAB2FDDB58E7 /* libPods-MyBibleVerses.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C6D38E0A71F374E9D5946A /* libPods-MyBibleVerses.a */; };
+		BBD0283894B8BA1D0A686923 /* libPods-MyBibleVerses.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8ECD508A9564AB2015D69D /* libPods-MyBibleVerses.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0DFB225C7F460F5A139E5CA6 /* Pods-MyBibleVerses.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyBibleVerses.debug.xcconfig"; path = "Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MyBibleVerses.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyBibleVerses.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MyBibleVerses/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MyBibleVerses/Info.plist; sourceTree = "<group>"; };
-		20E2B1460624455774C7A7EF /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MyBibleVerses/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		23F42C9B6C2B4A26B9FC32A7 /* Pods-MyBibleVerses.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyBibleVerses.release.xcconfig"; path = "Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses.release.xcconfig"; sourceTree = "<group>"; };
-		2641C49564833E89F06D5490 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = MyBibleVerses/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		7642865C12A00F6DA3B7EFA4 /* Pods-MyBibleVerses.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyBibleVerses.debug.xcconfig"; path = "Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses.debug.xcconfig"; sourceTree = "<group>"; };
+		27E552BCA190661D754BAAFD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = MyBibleVerses/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5B9BD7D3DE22E76B4141B93E /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MyBibleVerses/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		6C75E3A6A80F192B97D9E1B2 /* Pods-MyBibleVerses.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyBibleVerses.release.xcconfig"; path = "Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MyBibleVerses/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C0C6D38E0A71F374E9D5946A /* libPods-MyBibleVerses.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyBibleVerses.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD8ECD508A9564AB2015D69D /* libPods-MyBibleVerses.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyBibleVerses.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MyBibleVerses/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* MyBibleVerses-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "MyBibleVerses-Bridging-Header.h"; path = "MyBibleVerses/MyBibleVerses-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDA0FFAE046FAAB2FDDB58E7 /* libPods-MyBibleVerses.a in Frameworks */,
+				BBD0283894B8BA1D0A686923 /* libPods-MyBibleVerses.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				2641C49564833E89F06D5490 /* PrivacyInfo.xcprivacy */,
+				27E552BCA190661D754BAAFD /* PrivacyInfo.xcprivacy */,
 			);
 			name = MyBibleVerses;
 			sourceTree = "<group>";
@@ -62,23 +62,23 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C0C6D38E0A71F374E9D5946A /* libPods-MyBibleVerses.a */,
+				CD8ECD508A9564AB2015D69D /* libPods-MyBibleVerses.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		41603448C95F70FBED666C31 /* ExpoModulesProviders */ = {
+		54C6D7344FF22DED5194ED57 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				6686BF6F76354131E0DFBB86 /* MyBibleVerses */,
+				7D44B943EC15B97C607FE3F9 /* MyBibleVerses */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		6686BF6F76354131E0DFBB86 /* MyBibleVerses */ = {
+		7D44B943EC15B97C607FE3F9 /* MyBibleVerses */ = {
 			isa = PBXGroup;
 			children = (
-				20E2B1460624455774C7A7EF /* ExpoModulesProvider.swift */,
+				5B9BD7D3DE22E76B4141B93E /* ExpoModulesProvider.swift */,
 			);
 			name = MyBibleVerses;
 			sourceTree = "<group>";
@@ -97,8 +97,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				DEA8E642487A1334E65A1ECC /* Pods */,
-				41603448C95F70FBED666C31 /* ExpoModulesProviders */,
+				8CF45A8E33E9BD3DD770C656 /* Pods */,
+				54C6D7344FF22DED5194ED57 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -113,6 +113,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8CF45A8E33E9BD3DD770C656 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0DFB225C7F460F5A139E5CA6 /* Pods-MyBibleVerses.debug.xcconfig */,
+				6C75E3A6A80F192B97D9E1B2 /* Pods-MyBibleVerses.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,15 +129,6 @@
 			);
 			name = Supporting;
 			path = MyBibleVerses/Supporting;
-			sourceTree = "<group>";
-		};
-		DEA8E642487A1334E65A1ECC /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				7642865C12A00F6DA3B7EFA4 /* Pods-MyBibleVerses.debug.xcconfig */,
-				23F42C9B6C2B4A26B9FC32A7 /* Pods-MyBibleVerses.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,14 +139,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MyBibleVerses" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				BD49D9684D71FDE22AC45E35 /* [Expo] Configure project */,
+				3F65C3F66C7B158B5346C9CD /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				353332E697FF8FEC673DF6D0 /* [CP] Embed Pods Frameworks */,
-				EDC156FD89410B85AF559289 /* [CP-User] [RNGoogleMobileAds] Configuration */,
+				0A5CBDC8A3F608CBC0FA087C /* [CP] Embed Pods Frameworks */,
+				AF083A788D0CB15C5AAD18DB /* [CP-User] [RNGoogleMobileAds] Configuration */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				71D9A2EB8B882ADDEE6EF703 /* PrivacyInfo.xcprivacy in Resources */,
+				B8F666014803CBD4CF9BA2D9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,7 +240,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		353332E697FF8FEC673DF6D0 /* [CP] Embed Pods Frameworks */ = {
+		0A5CBDC8A3F608CBC0FA087C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -257,6 +257,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		3F65C3F66C7B158B5346C9CD /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-MyBibleVerses/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -304,26 +323,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyBibleVerses/Pods-MyBibleVerses-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BD49D9684D71FDE22AC45E35 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-MyBibleVerses/expo-configure-project.sh\"\n";
-		};
-		EDC156FD89410B85AF559289 /* [CP-User] [RNGoogleMobileAds] Configuration */ = {
+		AF083A788D0CB15C5AAD18DB /* [CP-User] [RNGoogleMobileAds] Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -346,7 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				71982F3E1F307FA61C89F641 /* ExpoModulesProvider.swift in Sources */,
+				35E5646CEF1DEA027CDB4615 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,7 +355,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7642865C12A00F6DA3B7EFA4 /* Pods-MyBibleVerses.debug.xcconfig */;
+			baseConfigurationReference = 0DFB225C7F460F5A139E5CA6 /* Pods-MyBibleVerses.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -381,18 +381,18 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cscouto.mybibleverses;
-				PRODUCT_NAME = MyBibleVerses;
+				PRODUCT_NAME = "MyBibleVerses";
 				SWIFT_OBJC_BRIDGING_HEADER = "MyBibleVerses/MyBibleVerses-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 23F42C9B6C2B4A26B9FC32A7 /* Pods-MyBibleVerses.release.xcconfig */;
+			baseConfigurationReference = 6C75E3A6A80F192B97D9E1B2 /* Pods-MyBibleVerses.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -413,10 +413,10 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cscouto.mybibleverses;
-				PRODUCT_NAME = MyBibleVerses;
+				PRODUCT_NAME = "MyBibleVerses";
 				SWIFT_OBJC_BRIDGING_HEADER = "MyBibleVerses/MyBibleVerses-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

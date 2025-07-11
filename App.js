@@ -27,10 +27,6 @@ import {
   Provider as PaperProvider,
   configureFonts,
 } from 'react-native-paper';
-import {
-  getTrackingPermissionsAsync,
-  requestTrackingPermissionsAsync,
-} from 'expo-tracking-transparency';
 import mobileAds, {
   BannerAd,
   BannerAdSize,
@@ -83,7 +79,6 @@ const theme = {
 
 export default function App() {
   /* ------------ STATE ------------ */
-  const [attStatus, setAttStatus] = useState('undetermined'); // 'undetermined' | 'granted' | 'denied' | 'restricted'
   const [verse, setVerse] = useState({ text: '', reference: '' });
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState('loading'); // loading | open | turn | display
@@ -105,37 +100,7 @@ export default function App() {
     });
 
   /* -------------------------------------------------------------------- */
-  /* 1) REQUEST APP-TRACKING-TRANSPARENCY IMMEDIATELY                      */
-  /*    (No InteractionManager wrapper → cannot be skipped by iOS)        */
-  /* -------------------------------------------------------------------- */
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'ios') {
-        setAttStatus('granted'); // Android, Web, etc.
-        return;
-      }
-
-      const { status } = await getTrackingPermissionsAsync();
-      if (status === 'undetermined') {
-        const { status: afterPrompt } = await requestTrackingPermissionsAsync();
-        setAttStatus(afterPrompt);
-      } else {
-        setAttStatus(status); // 'granted' | 'denied' | 'restricted'
-      }
-    })();
-  }, []);
-
-  /* -------------------------------------------------------------------- */
-  /* 2) INITIALISE ADMOB ONLY AFTER ATT RESULT IS KNOWN                    */
-  /* -------------------------------------------------------------------- */
-  useEffect(() => {
-    if (attStatus !== 'undetermined') {
-      mobileAds().initialize(); // Safe: runs once after ATT resolved
-    }
-  }, [attStatus]);
-
-  /* -------------------------------------------------------------------- */
-  /* 3) NOTIFICATION PERMISSIONS & ANDROID CHANNEL                         */
+  /* 1) NOTIFICATION PERMISSIONS & ANDROID CHANNEL                         */
   /* -------------------------------------------------------------------- */
   useEffect(() => {
     (async () => {
@@ -155,18 +120,19 @@ export default function App() {
   }, []);
 
   /* -------------------------------------------------------------------- */
-  /* 4) FETCH FIRST VERSE + SCHEDULE DAILY NOTIF                           */
+  /* 2) FETCH FIRST VERSE + SCHEDULE DAILY NOTIF                           */
   /* -------------------------------------------------------------------- */
   useEffect(() => {
     (async () => {
       await fetchVerse();
-      await scheduleIfNeeded();
+      await scheduleDailyNotification();
       setStage('open');
     })();
+    // Re‑run when locale changes so the notification text stays localized
   }, [TRANSLATION_ID]);
 
   /* -------------------------------------------------------------------- */
-  /* 5) KEEP SPLASH UNTIL FONTS LOADED                                     */
+  /* 3) KEEP SPLASH UNTIL FONTS LOADED                                     */
   /* -------------------------------------------------------------------- */
   if (!fontsLoaded) {
     return null;
@@ -191,32 +157,42 @@ export default function App() {
     setLoading(false);
   }
 
-  async function scheduleIfNeeded() {
+  /**
+   * Schedule a **repeating** daily notification at 10:00 AM.
+   * We cancel any existing schedule first to avoid duplicates.
+   * The schedule persists even if the user does not reopen the app.
+   */
+  async function scheduleDailyNotification() {
     const today = new Date().toISOString().split('T')[0];
     const lastOpen = await AsyncStorage.getItem(LAST_OPEN_KEY);
 
     if (lastOpen !== today) {
-      let triggerDate = new Date();
-      triggerDate.setHours(10, 0, 0, 0);
-      if (new Date() >= triggerDate) triggerDate.setDate(triggerDate.getDate() + 1);
-
+      // Clear previous schedules so we don't stack multiple identical ones
       await Notifications.cancelAllScheduledNotificationsAsync();
+
       await Notifications.scheduleNotificationAsync({
         content: {
           title: NOTIF_TITLE,
           body: verse.text || NOTIF_BODY,
           data: { reference: verse.reference },
         },
-        trigger: { type: 'date', date: triggerDate, channelId: 'default' },
+        trigger: {
+          hour: 10,
+          minute: 0,
+          repeats: true,
+          // iOS ignores channelId, but it is required for Android when using channels
+          channelId: 'default',
+        },
       });
+
+      await AsyncStorage.setItem(LAST_OPEN_KEY, today);
     }
-    await AsyncStorage.setItem(LAST_OPEN_KEY, today);
   }
 
   async function handleRefresh() {
     setStage('open');
     await fetchVerse();
-    await scheduleIfNeeded();
+    await scheduleDailyNotification();
   }
 
   /* ============================== UI ================================== */
@@ -266,13 +242,9 @@ export default function App() {
                       <ActivityIndicator size="large" />
                     ) : (
                       <>
-                        <Paragraph style={styles.text}>
-                          &ldquo;{verse.text}&rdquo;
-                        </Paragraph>
+                        <Paragraph style={styles.text}>&ldquo;{verse.text}&rdquo;</Paragraph>
                         {verse.reference && (
-                          <Paragraph style={styles.reference}>
-                            {verse.reference}
-                          </Paragraph>
+                          <Paragraph style={styles.reference}>{verse.reference}</Paragraph>
                         )}
                       </>
                     )}
@@ -283,13 +255,13 @@ export default function App() {
           </SafeAreaView>
 
           {/* ----------- Ad Banner (renders ONLY after ATT status decided) ----------- */}
-          {attStatus !== 'undetermined' && showBanner && (
+          {showBanner && (
             <View style={{ marginBottom: Platform.OS === 'ios' ? 0 : 40 }}>
               <BannerAd
                 unitId={bannerId}
                 size={BannerAdSize.ADAPTIVE_BANNER}
-                onAdLoaded={() => setShowBanner(true)}                      // ad came back → show
-                onAdFailedToLoad={err => {                                  // 👈 hide on failure
+                onAdLoaded={() => setShowBanner(true)} // ad came back → show
+                onAdFailedToLoad={err => {
                   console.warn('Banner failed:', err);
                   setShowBanner(false);
                 }}
