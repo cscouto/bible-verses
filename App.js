@@ -107,7 +107,9 @@ export default function App() {
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
         console.warn('Notification permissions not granted!');
+        return;
       }
+
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
           name: 'Default',
@@ -116,8 +118,21 @@ export default function App() {
           lightColor: '#FF231F7C',
         });
       }
+
+      await scheduleDailyNotification();
     })();
   }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      if (response.notification.request.content.data.fetchNewVerse) {
+        handleRefresh();
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
 
   /* -------------------------------------------------------------------- */
   /* 2) FETCH FIRST VERSE + SCHEDULE DAILY NOTIF                           */
@@ -163,30 +178,22 @@ export default function App() {
    * The schedule persists even if the user does not reopen the app.
    */
   async function scheduleDailyNotification() {
-    const today = new Date().toISOString().split('T')[0];
-    const lastOpen = await AsyncStorage.getItem(LAST_OPEN_KEY);
+    // Cancel any existing scheduled notifications to avoid duplicates
+    await Notifications.cancelAllScheduledNotificationsAsync();
 
-    if (lastOpen !== today) {
-      // Clear previous schedules so we don't stack multiple identical ones
-      await Notifications.cancelAllScheduledNotificationsAsync();
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: NOTIF_TITLE,
-          body: verse.text || NOTIF_BODY,
-          data: { reference: verse.reference },
-        },
-        trigger: {
-          hour: 10,
-          minute: 0,
-          repeats: true,
-          // iOS ignores channelId, but it is required for Android when using channels
-          channelId: 'default',
-        },
-      });
-
-      await AsyncStorage.setItem(LAST_OPEN_KEY, today);
-    }
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: NOTIF_TITLE,
+        body: NOTIF_BODY, // Always use static notification body
+        data: { fetchNewVerse: true },
+      },
+      trigger: {
+        hour: 9,        // <-- schedule at 9:00 AM
+        minute: 0,
+        repeats: true,  // <-- ensures it repeats daily
+        channelId: 'default',
+      },
+    });
   }
 
   async function handleRefresh() {
